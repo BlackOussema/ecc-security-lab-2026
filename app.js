@@ -44,19 +44,18 @@ async function startServer() {
     });
 
     await server.start();
-    // نقل واجهة الـ API إلى مسار /graphql لتجنب التداخل
+    // تغيير المسار هنا ليصبح /graphql بدلاً من المسار الرئيسي
     server.applyMiddleware({ app, path: '/graphql' });
 
-    // جعل المجلد العام هو المصدر الأساسي للواجهة
+    // خدمة ملفات الموقع من مجلد public
     app.use(express.static(path.join(__dirname, 'public')));
 
-    // توجيه أي طلب لفتح ملف index.html
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
 
     app.listen(CONFIG.PORT, () => {
-        console.log(`[SYSTEM] Lab is live on port ${CONFIG.PORT}`);
+        console.log(`[SYSTEM] Lab active on port ${CONFIG.PORT}`);
     });
 }
 
