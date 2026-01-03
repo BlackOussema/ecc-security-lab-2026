@@ -44,17 +44,15 @@ async function startServer() {
     });
 
     await server.start();
-    server.applyMiddleware({ app, path: '/graphql' }); // نقل الـ API لمسار فرعي
+    server.applyMiddleware({ app, path: '/graphql' });
 
-    // خدمة واجهة الموقع (HTML) في المسار الرئيسي
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, 'index.html'));
     });
 
-    app.listen({ port: CONFIG.PORT }, () =>
-        console.log(`[SYSTEM] Lab active on port ${CONFIG.PORT}`)
-    );
+    app.listen(CONFIG.PORT, () => {
+        console.log(`[SYSTEM] Lab is live on port ${CONFIG.PORT}`);
+    });
 }
 
 startServer();
