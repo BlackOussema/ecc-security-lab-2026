@@ -44,10 +44,15 @@ async function startServer() {
     });
 
     await server.start();
+    // نقل واجهة الـ API إلى مسار /graphql لتجنب التداخل
     server.applyMiddleware({ app, path: '/graphql' });
 
-    app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'index.html'));
+    // جعل المجلد العام هو المصدر الأساسي للواجهة
+    app.use(express.static(path.join(__dirname, 'public')));
+
+    // توجيه أي طلب لفتح ملف index.html
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
 
     app.listen(CONFIG.PORT, () => {
