@@ -44,18 +44,19 @@ async function startServer() {
     });
 
     await server.start();
-    // تغيير المسار هنا ليصبح /graphql بدلاً من المسار الرئيسي
+    
     server.applyMiddleware({ app, path: '/graphql' });
 
-    // خدمة ملفات الموقع من مجلد public
+    
     app.use(express.static(path.join(__dirname, 'public')));
 
+    
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
 
     app.listen(CONFIG.PORT, () => {
-        console.log(`[SYSTEM] Lab active on port ${CONFIG.PORT}`);
+        console.log(`[SYSTEM] Service initialized on http://localhost:${CONFIG.PORT}`);
     });
 }
 
