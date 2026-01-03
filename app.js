@@ -1,29 +1,21 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer, gql } = require('apollo-server-express');
+const express = require('express');
+const path = require('path');
 const jwt = require('jsonwebtoken');
 
 const CONFIG = {
-    PORT: 4000,
+    PORT: process.env.PORT || 4000,
     JWT_SECRET: "ECC-BETA-2026"
 };
 
 const typeDefs = gql`
-  type SystemStatus {
-    version: String
-    environment: String
-  }
-
-  type Query {
-    status: SystemStatus
-    getInternalFlag: String
-  }
+  type SystemStatus { version: String, environment: String }
+  type Query { status: SystemStatus, getInternalFlag: String }
 `;
 
 const resolvers = {
   Query: {
-    status: () => ({
-        version: "1.0.4-stable",
-        environment: "production-beta"
-    }),
+    status: () => ({ version: "1.0.4-stable", environment: "production-beta" }),
     getInternalFlag: (parent, args, context) => {
       if (!context.auth || context.auth.role !== 'admin') {
         throw new Error("Forbidden: Administrative privileges required.");
@@ -33,24 +25,36 @@ const resolvers = {
   }
 };
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ req }) => {
-    const header = req.headers.authorization || '';
-    if (header.startsWith('Bearer ')) {
-      const token = header.split(' ')[1];
-      try {
-        const decoded = jwt.verify(token, CONFIG.JWT_SECRET);
-        return { auth: decoded };
-      } catch (err) {
-        return null;
-      }
-    }
-  },
-  introspection: true
-});
+async function startServer() {
+    const app = express();
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        introspection: true,
+        context: ({ req }) => {
+            const header = req.headers.authorization || '';
+            if (header.startsWith('Bearer ')) {
+                const token = header.split(' ')[1];
+                try {
+                    const decoded = jwt.verify(token, CONFIG.JWT_SECRET);
+                    return { auth: decoded };
+                } catch (err) { return null; }
+            }
+        }
+    });
 
-server.listen({ port: CONFIG.PORT }).then(({ url }) => {
-  console.log(`[SYSTEM] Service initialized on ${url}`);
-});
+    await server.start();
+    server.applyMiddleware({ app, path: '/graphql' }); // نقل الـ API لمسار فرعي
+
+    // خدمة واجهة الموقع (HTML) في المسار الرئيسي
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    });
+
+    app.listen({ port: CONFIG.PORT }, () =>
+        console.log(`[SYSTEM] Lab active on port ${CONFIG.PORT}`)
+    );
+}
+
+startServer();

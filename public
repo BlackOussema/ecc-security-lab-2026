@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ECC Internal Beta Portal</title>
+    <style>
+        body { background: #0d1117; color: #58a6ff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { border: 1px solid #30363d; padding: 50px; border-radius: 10px; background: #161b22; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #238636; }
+        .token-box { margin-top: 20px; font-size: 0.8em; color: #8b949e; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ECC Systems: Internal Portal</h1>
+        <p>Access Level: <strong>GUEST</strong></p>
+        <p>Status: <span style="color: #d29922;">BETA TESTING MODE</span></p>
+        <div class="token-box">Session initialized. Check developer tools for local identity.</div>
+    </div>
+    <script>
+        const guestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1ZXN0Iiwicm9sZSI6Imd1ZXN0In0.fake-signature";
+        localStorage.setItem('session_token', guestToken);
+        console.log("System Trace: Authentication provider connected to /graphql");
+    </script>
+</body>
+</html>
