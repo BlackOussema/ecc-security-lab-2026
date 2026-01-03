@@ -1,0 +1,14 @@
+{
+  "name": "ecc-internal-portal-lab",
+  "version": "1.0.0",
+  "description": "Security challenge for EC-Council CTF",
+  "main": "app.js",
+  "dependencies": {
+    "apollo-server": "^3.11.1",
+    "graphql": "^16.6.0",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
